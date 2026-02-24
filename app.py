@@ -32,11 +32,17 @@ def start_scraping(selected_sources, num_news):
     progress_bar = st.progress(0)
     
     # 開始抓取各個來源
-    for idx, name in enumerate(selected_sources):
-        url = all_sources[name]
-        st.subheader(f"📍 {name}")
-        
-        feed = feedparser.parse(url)
+    # 在你的 loop 裡面修改這一段
+for idx, name in enumerate(selected_sources):
+    url = all_sources[name]
+    st.subheader(f"📍 {name}")
+    
+    # 💡 修改點：加入 User-Agent 偽裝成瀏覽器
+    feed = feedparser.parse(url, agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')
+    
+    if not feed.entries:
+        st.warning(f"目前無法從 {name} 取得內容，可能是該網站暫時阻擋連線。")
+        continue
         
         for i, entry in enumerate(feed.entries[:num_news], 1):
             with st.container():
