@@ -125,7 +125,7 @@ selected_sources = st.sidebar.multiselect(
     default=source_options
 )
 
-num_news = st.sidebar.slider("每個媒體抓取則數", 1, 10, 3)
+num_news = st.sidebar.slider("每個媒體抓取則數", 1, 10, 5)
 run_button = st.sidebar.button("🔍 更新新聞")
 
 if run_button:
