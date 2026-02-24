@@ -7,7 +7,12 @@ from datetime import datetime
 
 # 1. 網頁頁面標題與基礎設定
 st.set_page_config(page_title="全球新聞自選", page_icon="🌍", layout="wide")
-
+st.markdown(
+    """
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/21/21601.png">
+    """,
+    unsafe_allow_html=True
+)
 
 def clean_text(text):
     """清理摘要中的 HTML 標籤及多餘換行"""
