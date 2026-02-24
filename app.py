@@ -102,8 +102,8 @@ st.title(f"🌍 全球重大新聞監測系統 ({today})")
 
 st.sidebar.title("🛠 控制面板")
 source_options = [
-    "🇯🇵 日本 (NHK World)", "🇨🇳 中國 (新華社-國際)", "🇨🇳 中國 (新華社-即時時政)",
-    "🇩🇪 德國 (DW News)", "🇹🇼 台灣 (自由時報-國際)", "🇬🇧 英國 (BBC World)", "🇺🇸 美國 (WSJ)"
+     "🇺🇸 美國 (WSJ)","🇬🇧 英國 (BBC World)",  "🇩🇪 德國 (DW News)", "🇹🇼 台灣 (自由時報-國際)",
+     "🇨🇳 中國 (新華社-國際)", "🇨🇳 中國 (新華社-即時時政)", "🇯🇵 日本 (NHK World)"
 ]
 
 selected_sources = st.sidebar.multiselect("選擇媒體：", options=source_options, default=source_options)
