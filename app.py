@@ -10,9 +10,7 @@ st.set_page_config(page_title="全球新聞自選", page_icon="🌍", layout="wi
 
 # 在 st.set_page_config 之後加入這段
 st.markdown(
-    """
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/21/21601.png">
-    """,
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/21/21601.png">,
     unsafe_allow_html=True
 )
 
