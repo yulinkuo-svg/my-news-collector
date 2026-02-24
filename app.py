@@ -21,7 +21,7 @@ def start_scraping(selected_sources, num_news):
         "🇯🇵 日本 (NHK World)": "https://www3.nhk.or.jp/rss/news/cat0.xml",
         "🇨🇳 中國 (SCMP)": "https://www.scmp.com/rss/2/feed",
         "🇩🇪 德國 (DW News)": "https://rss.dw.com/rdf/rss-en-all",
-        "🇹🇼 台灣 (自由時報)": "https://news.ltn.com.tw/rss/all.xml",
+        "🇹🇼 台灣 (自由時報)": "https://news.ltn.com.tw/rss/world.xml",
         "🇬🇧 英國 (BBC World)": "http://feeds.bbci.co.uk/news/world/rss.xml",
         "🇺🇸 美國 (WSJ)": "https://feeds.a.dj.com/rss/RSSWorldNews.xml"
     }
