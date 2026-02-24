@@ -7,7 +7,7 @@ from datetime import datetime
 
 # 1. 網頁頁面標題與佈局設定
 st.set_page_config(
-    page_title="全球新聞自選站", 
+    page_title="全球新聞自選", 
     page_icon="🌍", 
     layout="wide"
 )
@@ -101,7 +101,7 @@ def start_scraping(selected_sources, num_news):
 
 # --- 主畫面與側邊欄 ---
 today = datetime.now().strftime('%Y-%m-%d')
-st.title(f"🌍 全球重大新聞監測系統 ({today})")
+st.title(f"🌍 全球新聞 ({today})")
 
 st.sidebar.title("🛠 控制面板")
 source_options = [
