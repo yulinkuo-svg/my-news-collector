@@ -6,7 +6,7 @@ import re
 from datetime import datetime
 
 # 1. 網頁頁面標題與基礎設定
-st.set_page_config(page_title="全球新聞自選站", page_icon="🌍", layout="wide")
+st.set_page_config(page_title="全球新聞自選", page_icon="🌍", layout="wide")
 
 def clean_text(text):
     """清理摘要中的 HTML 標籤及多餘換行"""
@@ -107,7 +107,7 @@ def start_scraping(selected_sources, num_news):
 
 # --- 主畫面顯示區域 ---
 today = datetime.now().strftime('%Y-%m-%d')
-st.title(f"🌍 全球重大新聞監測系統 ({today})")
+st.title(f"🌍 本日全球新聞 ({today})")
 
 # --- 側邊欄控制面板 ---
 st.sidebar.title("🛠 控制面板")
