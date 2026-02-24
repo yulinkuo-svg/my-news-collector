@@ -12,17 +12,6 @@ st.set_page_config(
     layout="wide"
 )
 
-# 2. 自訂 iPhone 主畫面圖示
-st.markdown(
-    """
-    <head>
-        <link rel="apple-touch-icon" sizes="180x180" href="https://cdn-icons-png.flaticon.com/512/10433/10433048.png?v=2">
-        <link rel="shortcut icon" type="image/x-icon" href="https://cdn-icons-png.flaticon.com/512/10433/10433048.png?v=2">
-    </head>
-    """,
-    unsafe_allow_html=True
-)
-
 def clean_text(text):
     if not text: return ""
     clean = re.compile('<.*?>')
