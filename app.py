@@ -19,7 +19,7 @@ def start_scraping(selected_sources, num_news):
     # 新聞來源清單
     all_sources = {
         "🇯🇵 日本 (NHK World)": "https://www3.nhk.or.jp/rss/news/cat0.xml",
-        "🇨🇳 中國 (新華社)": "http://www.xinhuanet.com/english/rss/worldrss.xml",
+        "🇨🇳 中國 (新華社)": "http://www.xinhuanet.com/politics/news_politics.xml",
         "🇩🇪 德國 (DW News)": "https://rss.dw.com/rdf/rss-en-all",
         "🇹🇼 台灣 (自由時報)": "https://news.ltn.com.tw/rss/world.xml",
         "🇬🇧 英國 (BBC World)": "http://feeds.bbci.co.uk/news/world/rss.xml",
