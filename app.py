@@ -13,7 +13,7 @@ def clean_text(text):
     return " ".join(re.sub(clean, '', text).split())
 
 def start_scraping(selected_sources, num_news):
-    # 定義所有可選的新聞來源
+    # 新聞來源清單
     all_sources = {
         "🇯🇵 日本 (NHK World)": "https://www3.nhk.or.jp/rss/news/cat0.xml",
         "🇨🇳 中國 (SCMP)": "https://www.scmp.com/rss/2/feed",
@@ -31,6 +31,7 @@ def start_scraping(selected_sources, num_news):
 
     progress_bar = st.progress(0)
     
+    # 開始抓取各個來源
     for idx, name in enumerate(selected_sources):
         url = all_sources[name]
         st.subheader(f"📍 {name}")
@@ -40,34 +41,54 @@ def start_scraping(selected_sources, num_news):
         for i, entry in enumerate(feed.entries[:num_news], 1):
             with st.container():
                 try:
-                    # 翻譯標題與摘要 (src='auto' 自動偵測語言)
-                    trans_title = translator.translate(entry.title, src='auto', dest='zh-tw').text
+                    raw_title = entry.title
                     raw_summary = clean_text(entry.get('summary', '無提供摘要'))
-                    # 摘要取前 150 字進行翻譯
-                    trans_summary = translator.translate(raw_summary[:150], src='auto', dest='zh-tw').text
                     
-                    # 網頁排版：標題區
+                    # 判斷是否需要翻譯 (自由時報跳過翻譯)
+                    if "自由時報" in name:
+                        trans_title = raw_title
+                        trans_summary = raw_summary
+                        is_translated = False
+                    else:
+                        # 執行翻譯
+                        trans_title = translator.translate(raw_title, src='auto', dest='zh-tw').text
+                        trans_summary = translator.translate(raw_summary[:150], src='auto', dest='zh-tw').text
+                        is_translated = True
+                    
+                    # 網頁排版呈現
                     st.markdown(f"#### {i}. {trans_title}")
-                    st.caption(f"Original: {entry.title}")
                     
-                    # 摘要對照區 (不使用摺疊，直接列出)
                     col1, col2 = st.columns(2)
-                    with col1:
-                        st.markdown("**[EN Summary]**")
-                        st.write(f"{raw_summary[:250]}...")
-                    with col2:
-                        st.markdown("**[中文摘要]**")
-                        st.write(f"{trans_summary}...")
+                    if is_translated:
+                        with col1:
+                            st.caption(f"Original Title: {raw_title}")
+                            st.markdown("**[EN Summary]**")
+                            st.write(f"{raw_summary[:250]}...")
+                        with col2:
+                            st.markdown("**[中文摘要翻譯]**")
+                            st.write(f"{trans_summary}...")
+                    else:
+                        with col1:
+                            st.markdown("**[新聞內容摘要]**")
+                            st.write(f"{raw_summary[:400]}...")
+                        with col2:
+                            st.empty()
                     
                     st.write(f"🔗 [閱讀原文連結]({entry.link})")
                     st.divider()
                     
-                    # 避免翻譯過快導致被封鎖
-                    time.sleep(1.5)
+                    # 避免翻譯過快
+                    if is_translated:
+                        time.sleep(1.2)
                 except Exception as e:
-                    st.error(f"該則新聞翻譯失敗：{e}")
+                    st.error(f"載入失敗：{e}")
         
+        # 更新進度條
         progress_bar.progress((idx + 1) / len(selected_sources))
+
+    # --- 關鍵改動：所有新聞列出後的完成提示 ---
+    st.success("✅ 已完成本日新聞摘要，請閱讀。")
+    st.balloons() # 額外加個小驚喜：噴出慶祝氣球
 
 # --- 側邊欄介面 ---
 st.sidebar.title("🛠 控制面板")
@@ -84,7 +105,7 @@ source_options = [
 selected_sources = st.sidebar.multiselect(
     "選擇媒體：",
     options=source_options,
-    default=["🇩🇪 德國 (DW News)","🇹🇼 台灣 (自由時報)","🇯🇵 日本 (NHK World)","🇬🇧 英國 (BBC World)"]
+    default=["🇺🇸 美國 (Reuters)","🇬🇧 英國 (BBC World)","🇩🇪 德國 (DW News)","🇹🇼 台灣 (自由時報)","🇯🇵 日本 (NHK World)"]
 )
 
 num_news = st.sidebar.slider("抓取則數", 1, 5, 3)
