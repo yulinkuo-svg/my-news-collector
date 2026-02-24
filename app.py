@@ -52,6 +52,7 @@ def start_scraping(selected_sources, num_news):
                     raw_title = entry.title
                     raw_summary = clean_text(entry.get('summary', '無提供摘要內容'))
                     
+                    """
                     if "自由時報" in name:
                         trans_title = raw_title
                         trans_summary = raw_summary
@@ -62,6 +63,27 @@ def start_scraping(selected_sources, num_news):
                         is_translated = True
                     
                     st.markdown(f"#### {i}. {trans_title}")
+                    """
+                    
+                    # 判斷是否需要翻譯
+                    is_chinese_source = any(kw in name for kw in ["自由時報", "財新網", "新華社"])
+                    
+                    if is_chinese_source:
+                        # 簡轉繁或直接顯示
+                        trans_title = translator.translate(raw_title, dest='zh-tw').text if "自由時報" not in name else raw_title
+                        trans_summary = translator.translate(raw_summary[:300], dest='zh-tw').text if "自由時報" not in name else raw_summary
+                    else:
+                        # 英文轉繁中
+                        trans_title = translator.translate(raw_title, src='auto', dest='zh-tw').text
+                        trans_summary = translator.translate(raw_summary[:200], src='auto', dest='zh-tw').text
+                    
+                    # --- 視覺排版調整 ---
+                    # 1. 最上方顯示：原文標題 (如果是英文就顯示英文，中文就顯示中文)
+                    st.markdown(f"#### {i}. {raw_title}")
+                    
+                    # 2. 如果是需要對照的來源 (非台灣媒體)，在標題下方加註翻譯標題
+                    if not "自由時報" in name:
+                        st.caption(f"✨ 中文標題：{trans_title}")
                     
                     col1, col2 = st.columns(2)
                     if is_translated:
