@@ -20,7 +20,7 @@ def start_scraping(selected_sources, num_news):
         "🇩🇪 德國 (DW News)": "https://rss.dw.com/rdf/rss-en-all",
         "🇹🇼 台灣 (自由時報)": "https://news.ltn.com.tw/rss/all.xml",
         "🇬🇧 英國 (BBC World)": "http://feeds.bbci.co.uk/news/world/rss.xml",
-        "🇺🇸 美國 (Reuters)": "https://www.reutersagency.com/feed/?best-topics=political-general&post_type=best"
+        "🇺🇸 美國 (Reuters)": "https://www.reuters.com/arc/outboundfeeds/rss/?outputType=xml"
     }
 
     translator = Translator()
