@@ -3,7 +3,7 @@ import feedparser
 from googletrans import Translator
 import time
 import re
-from datetime import datetime  # 導入日期模組
+from datetime import datetime
 
 # 1. 網頁頁面標題與設定
 st.set_page_config(page_title="全球新聞自選站", page_icon="🌍", layout="wide")
@@ -16,13 +16,13 @@ def clean_text(text):
     return " ".join(text.split())
 
 def start_scraping(selected_sources, num_news):
-    # 新聞來源清單
+    # 媒體清單：已將財新網替換為新華社國際版
     all_sources = {
         "🇯🇵 日本 (NHK World)": "https://www3.nhk.or.jp/rss/news/cat0.xml",
-        "🇨🇳 中國 (新華社_Local)": "http://www.xinhuanet.com/politics/news_politics.xml",
-        "🇨🇳 中國 (新華社_World)": "http://www.xinhuanet.com/english/rss/worldrss.xml",
+        "🇨🇳 中國 (新華社-國際)": "http://www.xinhuanet.com/world/news_world.xml",
+        "🇨🇳 中國 (新華社-即時時政)": "http://www.xinhuanet.com/politics/news_politics.xml",
         "🇩🇪 德國 (DW News)": "https://rss.dw.com/rdf/rss-en-all",
-        "🇹🇼 台灣 (自由時報)": "https://news.ltn.com.tw/rss/world.xml",
+        "🇹🇼 台灣 (自由時報-國際)": "https://news.ltn.com.tw/rss/world.xml", 
         "🇬🇧 英國 (BBC World)": "http://feeds.bbci.co.uk/news/world/rss.xml",
         "🇺🇸 美國 (WSJ)": "https://feeds.a.dj.com/rss/RSSWorldNews.xml"
     }
@@ -39,6 +39,7 @@ def start_scraping(selected_sources, num_news):
         url = all_sources[name]
         st.subheader(f"📍 {name}")
         
+        # 偽裝瀏覽器
         user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         feed = feedparser.parse(url, agent=user_agent)
         
@@ -52,93 +53,14 @@ def start_scraping(selected_sources, num_news):
                     raw_title = entry.title
                     raw_summary = clean_text(entry.get('summary', '無提供摘要內容'))
                     
-                    """
-                    if "自由時報" in name:
-                        trans_title = raw_title
-                        trans_summary = raw_summary
-                        is_translated = False
-                    else:
-                        trans_title = translator.translate(raw_title, src='auto', dest='zh-tw').text
-                        trans_summary = translator.translate(raw_summary[:150], src='auto', dest='zh-tw').text
-                        is_translated = True
-                    
-                    st.markdown(f"#### {i}. {trans_title}")
-                    """
-                    
-                    # 判斷是否需要翻譯
-                    is_chinese_source = any(kw in name for kw in ["自由時報", "財新網", "新華社"])
+                    # 判斷是否需要翻譯 (只要是新華社或自由時報都跳過英文轉中文，改為簡轉繁或直接顯示)
+                    is_chinese_source = any(kw in name for kw in ["自由時報", "新華社"])
                     
                     if is_chinese_source:
-                        # 簡轉繁或直接顯示
-                        trans_title = translator.translate(raw_title, dest='zh-tw').text if "自由時報" not in name else raw_title
-                        trans_summary = translator.translate(raw_summary[:300], dest='zh-tw').text if "自由時報" not in name else raw_summary
+                        # 自由時報不動，新華社執行簡轉繁
+                        trans_title = translator.translate(raw_title, dest='zh-tw').text if "新華社" in name else raw_title
+                        trans_summary = translator.translate(raw_summary[:300], dest='zh-tw').text if "新華社" in name else raw_summary
                     else:
-                        # 英文轉繁中
+                        # 英文媒體執行英文轉繁中
                         trans_title = translator.translate(raw_title, src='auto', dest='zh-tw').text
                         trans_summary = translator.translate(raw_summary[:200], src='auto', dest='zh-tw').text
-                    
-                    # --- 視覺排版調整 ---
-                    # 1. 最上方顯示：原文標題 (如果是英文就顯示英文，中文就顯示中文)
-                    st.markdown(f"#### {i}. {raw_title}")
-                    
-                    # 2. 如果是需要對照的來源 (非台灣媒體)，在標題下方加註翻譯標題
-                    if not "自由時報" in name:
-                        st.caption(f"✨ 中文標題：{trans_title}")
-                    
-                    col1, col2 = st.columns(2)
-                    if is_translated:
-                        with col1:
-                            st.caption(f"Original Title: {raw_title}")
-                            st.markdown("**[EN Summary]**")
-                            st.write(f"{raw_summary[:250]}...")
-                        with col2:
-                            st.markdown("**[中文摘要翻譯]**")
-                            st.write(f"{trans_summary}...")
-                    else:
-                        with col1:
-                            st.markdown("**[新聞內容摘要]**")
-                            st.write(f"{raw_summary[:400]}...")
-                        with col2:
-                            st.empty()
-                    
-                    st.write(f"🔗 [閱讀原文連結]({entry.link})")
-                    st.divider()
-                    
-                    if is_translated:
-                        time.sleep(1.2)
-                except Exception as e:
-                    st.error(f"該則新聞處理失敗：{e}")
-        
-        progress_bar.progress((idx + 1) / len(selected_sources))
-
-    st.success("✅ 已完成本日新聞摘要，請閱讀。")
-    st.balloons()
-
-# --- 主畫面顯示 ---
-# 取得今天日期
-today = datetime.now().strftime('%Y-%m-%d')
-
-st.title(f"🌍 全球重大新聞監測系統 ({today})")  # 在標題後加上日期
-st.write("透過各國媒體 RSS 獲取即時動態，並自動提供中英對照摘要。")
-
-# --- 側邊欄介面 ---
-st.sidebar.title("🛠 控制面板")
-
-source_options = [
-    "🇯🇵 日本 (NHK World)", "🇨🇳 中國 (新華社_World)", "🇨🇳 中國 (新華社_Local)", "🇩🇪 德國 (DW News)", 
-    "🇹🇼 台灣 (自由時報)", "🇬🇧 英國 (BBC World)", "🇺🇸 美國 (WSJ)"
-]
-
-selected_sources = st.sidebar.multiselect(
-    "選擇媒體：",
-    options=source_options,
-    default=["🇺🇸 美國 (WSJ)", "🇬🇧 英國 (BBC World)","🇩🇪 德國 (DW News)","🇹🇼 台灣 (自由時報)","🇨🇳 中國 (新華社_World)","🇨🇳 中國 (新華社_Local)","🇯🇵 日本 (NHK World)"]
-)
-
-num_news = st.sidebar.slider("抓取則數", 1, 5, 3)
-run_button = st.sidebar.button("🔍 更新新聞")
-
-if run_button:
-    start_scraping(selected_sources, num_news)
-else:
-    st.info("請在左側選擇來源並點擊「更新新聞」。")
