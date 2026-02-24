@@ -23,8 +23,7 @@ def start_scraping(selected_sources, num_news):
         "🇩🇪 德國 (DW News)": "https://rss.dw.com/rdf/rss-en-all",
         "🇹🇼 台灣 (自由時報)": "https://news.ltn.com.tw/rss/all.xml",
         "🇬🇧 英國 (BBC World)": "http://feeds.bbci.co.uk/news/world/rss.xml",
-        "🇺🇸 美國 (WSJ)": "https://feeds.a.dj.com/rss/RSSWorldNews.xml",
-        "🇺🇸 美國 (Reuters)": "https://www.reuters.com/arc/outboundfeeds/rss/?outputType=xml"
+        "🇺🇸 美國 (WSJ)": "https://feeds.a.dj.com/rss/RSSWorldNews.xml"
     }
 
     translator = Translator()
@@ -104,13 +103,13 @@ st.sidebar.title("🛠 控制面板")
 
 source_options = [
     "🇯🇵 日本 (NHK World)", "🇨🇳 中國 (SCMP)", "🇩🇪 德國 (DW News)", 
-    "🇹🇼 台灣 (自由時報)", "🇬🇧 英國 (BBC World)", "🇺🇸 美國 (WSJ)", "🇺🇸 美國 (Reuters)"
+    "🇹🇼 台灣 (自由時報)", "🇬🇧 英國 (BBC World)", "🇺🇸 美國 (WSJ)"
 ]
 
 selected_sources = st.sidebar.multiselect(
     "選擇媒體：",
     options=source_options,
-    default=["🇹🇼 台灣 (自由時報)", "🇺🇸 美國 (WSJ)"]
+    default=["🇺🇸 美國 (WSJ)", "🇬🇧 英國 (BBC World)","🇩🇪 德國 (DW News)","🇹🇼 台灣 (自由時報)","🇯🇵 日本 (NHK World)"]
 )
 
 num_news = st.sidebar.slider("抓取則數", 1, 5, 3)
