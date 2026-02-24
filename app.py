@@ -90,7 +90,7 @@ def start_scraping(selected_sources, num_news):
 
 # --- 主畫面與側邊欄 ---
 today = datetime.now().strftime('%Y-%m-%d')
-st.title(f"🌍 本日全球新聞摘要 ({today})")
+st.title(f"🌍 本日新聞摘要 ({today})")
 
 st.sidebar.title("🛠 控制面板")
 source_options = [
