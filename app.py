@@ -33,42 +33,45 @@ def start_scraping(selected_sources, num_news):
     
     for idx, name in enumerate(selected_sources):
         url = all_sources[name]
-        st.header(f"📍 {name}")
+        st.subheader(f"📍 {name}")
         
         feed = feedparser.parse(url)
         
         for i, entry in enumerate(feed.entries[:num_news], 1):
             with st.container():
                 try:
-                    # 翻譯標題與摘要 (src='auto' 增加相容性)
+                    # 翻譯標題與摘要 (src='auto' 自動偵測語言)
                     trans_title = translator.translate(entry.title, src='auto', dest='zh-tw').text
                     raw_summary = clean_text(entry.get('summary', '無提供摘要'))
+                    # 摘要取前 150 字進行翻譯
                     trans_summary = translator.translate(raw_summary[:150], src='auto', dest='zh-tw').text
                     
+                    # 網頁排版：標題區
+                    st.markdown(f"#### {i}. {trans_title}")
+                    st.caption(f"Original: {entry.title}")
+                    
+                    # 摘要對照區 (不使用摺疊，直接列出)
                     col1, col2 = st.columns(2)
                     with col1:
-                        st.markdown(f"**[{i}] Original Title**")
-                        st.write(entry.title)
+                        st.markdown("**[EN Summary]**")
+                        st.write(f"{raw_summary[:250]}...")
                     with col2:
-                        st.markdown(f"**[{i}] 中文翻譯**")
-                        st.write(trans_title)
+                        st.markdown("**[中文摘要]**")
+                        st.write(f"{trans_summary}...")
                     
-                    with st.expander("查看摘要對照"):
-                        st.write(f"**EN:** {raw_summary[:200]}...")
-                        st.write(f"**中:** {trans_summary}...")
-                    
-                    st.write(f"🔗 [點擊閱讀原文]({entry.link})")
+                    st.write(f"🔗 [閱讀原文連結]({entry.link})")
                     st.divider()
-                    time.sleep(1.2)
+                    
+                    # 避免翻譯過快導致被封鎖
+                    time.sleep(1.5)
                 except Exception as e:
-                    st.error(f"該則新聞載入失敗，可能翻譯伺服器繁忙。")
+                    st.error(f"該則新聞翻譯失敗：{e}")
         
         progress_bar.progress((idx + 1) / len(selected_sources))
 
 # --- 側邊欄介面 ---
 st.sidebar.title("🛠 控制面板")
 
-# 定義可選的來源清單
 source_options = [
     "🇯🇵 日本 (NHK World)", 
     "🇨🇳 中國 (SCMP)", 
@@ -78,16 +81,14 @@ source_options = [
     "🇺🇸 美國 (Reuters)"
 ]
 
-# 讓使用者勾選來源
 selected_sources = st.sidebar.multiselect(
-    "選擇想要追蹤的媒體：",
+    "選擇媒體：",
     options=source_options,
-    default=["🇯🇵 日本 (NHK World)", "🇹🇼 台灣 (Focus Taiwan)"] # 預設勾選這兩個
+    default=["🇯🇵 日本 (NHK World)", "🇹🇼 台灣 (Focus Taiwan)"]
 )
 
-num_news = st.sidebar.slider("每個媒體抓取則數", 1, 5, 2)
-
-run_button = st.sidebar.button("🔍 立即更新新聞")
+num_news = st.sidebar.slider("抓取則數", 1, 5, 3)
+run_button = st.sidebar.button("🔍 更新新聞")
 
 # --- 主畫面顯示 ---
 st.title("🌍 全球重大新聞監測系統")
@@ -95,4 +96,4 @@ st.title("🌍 全球重大新聞監測系統")
 if run_button:
     start_scraping(selected_sources, num_news)
 else:
-    st.info("請在左側選擇來源並點擊「立即更新新聞」。")
+    st.info("請在左側選擇來源並點擊「更新新聞」。")
